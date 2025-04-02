@@ -7,23 +7,34 @@
 
 import Foundation
 
+enum RoomFilterType {
+    case all, available, occupied
+}
+
 @MainActor
 class RoomViewModel: ObservableObject {
     @Published var rooms: [Room] = []
     @Published var isLoading = false
+    @Published var filter: RoomFilterType = .available
 
-    func fetchAvailableRooms() async {
+    func fetchRooms() async {
         isLoading = true
         do {
-            let response: [Room] = try await SupabaseManager.shared.client
-                .from("rooms")
-                .select()
-                .eq("is_available", value: true)
-                .execute()
-                .value
+            var query = SupabaseManager.shared.client.from("rooms").select()
+
+            switch filter {
+            case .available:
+                query = query.eq("is_available", value: true)
+            case .occupied:
+                query = query.eq("is_available", value: false)
+            case .all:
+                break
+            }
+
+            let response: [Room] = try await query.execute().value
             self.rooms = response
         } catch {
-            print("Ошибка при получении номеров: \(error)")
+            print("Ошибка при загрузке номеров: \(error)")
         }
         isLoading = false
     }

@@ -9,9 +9,21 @@ import SwiftUI
 
 @main
 struct HotelAppApp: App {
+    @StateObject var session = UserSession()
+
     var body: some Scene {
         WindowGroup {
-            RoomListView()
+            if session.isLoggedIn {
+                NavigationStack {
+                    RoomListView()
+                }
+                .environmentObject(session)
+            } else {
+                NavigationStack {
+                    AuthView()
+                }
+                .environmentObject(session)
+            }
         }
     }
 }
