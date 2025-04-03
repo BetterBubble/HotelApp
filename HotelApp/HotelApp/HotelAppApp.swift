@@ -14,15 +14,26 @@ struct HotelAppApp: App {
     var body: some Scene {
         WindowGroup {
             if session.isLoggedIn {
-                NavigationStack {
+                TabView {
                     RoomListView()
+                        .tabItem {
+                            Label("Номера", systemImage: "bed.double")
+                        }
+
+                    MenuView()
+                        .tabItem {
+                            Label("Меню", systemImage: "fork.knife")
+                        }
+
+                    ProfileView()
+                        .tabItem {
+                            Label("Профиль", systemImage: "person.circle")
+                        }
                 }
                 .environmentObject(session)
             } else {
-                NavigationStack {
-                    AuthView()
-                }
-                .environmentObject(session)
+                AuthView()
+                    .environmentObject(session)
             }
         }
     }
