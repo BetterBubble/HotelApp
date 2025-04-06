@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct HotelAppApp: App {
     @StateObject var session = UserSession()
+    @StateObject var cartManager = CartManager()
 
     var body: some Scene {
         WindowGroup {
@@ -24,6 +25,7 @@ struct HotelAppApp: App {
                         .tabItem {
                             Label("Меню", systemImage: "fork.knife")
                         }
+                        .environmentObject(cartManager)
 
                     ProfileView()
                         .tabItem {

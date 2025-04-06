@@ -5,6 +5,7 @@ final class UserSession: ObservableObject {
     @Published var isLoggedIn = false
     @Published var userEmail: String?
     @Published var avatarURL: String?
+    @Published var userID: String = ""
 
     let client = SupabaseManager.shared.client
 

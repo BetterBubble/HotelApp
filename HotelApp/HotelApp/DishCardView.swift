@@ -9,6 +9,7 @@ import SwiftUI
 
 struct DishCardView: View {
     let dish: Dish
+    @EnvironmentObject var cartManager: CartManager
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -40,6 +41,21 @@ struct DishCardView: View {
             }
             .font(.footnote)
             .foregroundColor(.gray)
+            
+            //добавление в корзину блюд в меню
+            Button(action: {
+                cartManager.add(dish)
+            }) {
+                HStack {
+                    Image(systemName: "cart.badge.plus")
+                    Text("Добавить в корзину")
+                }
+                .font(.footnote)
+                .foregroundColor(.white)
+                .padding(8)
+                .background(Color.blue)
+                .cornerRadius(8)
+            }
         }
         .padding()
         .background(.white)

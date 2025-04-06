@@ -8,7 +8,7 @@
 import Foundation
 
 struct Dish: Identifiable, Codable {
-    let id: Int
+    let id: UUID
     let name: String
     let description: String
     let price: Int
