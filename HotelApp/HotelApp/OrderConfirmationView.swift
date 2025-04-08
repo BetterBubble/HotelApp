@@ -15,6 +15,7 @@ struct OrderConfirmationView: View {
 
     @State private var selectedDate = Date()
     @State private var selectedTime = Date()
+    @State private var showOrderSuccess = false
 
     var body: some View {
         VStack(spacing: 20) {
@@ -25,7 +26,13 @@ struct OrderConfirmationView: View {
                 .datePickerStyle(.graphical)
 
             DatePicker("Время", selection: $selectedTime, in: allowedTimes, displayedComponents: .hourAndMinute)
-
+            
+            let totalPrice = cartManager.items.reduce(0) { $0 + ($1.dish.price * $1.quantity) }
+            Text("Итого к оплате: \(totalPrice) ₽")
+                .font(.title2)
+                .bold()
+                .padding()
+            
             Button(action: placeOrder) {
                 Text("Подтвердить заказ")
                     .bold()
@@ -36,8 +43,17 @@ struct OrderConfirmationView: View {
                     .cornerRadius(12)
                     .padding(.horizontal)
             }
-
+            
             Spacer()
+            
+            .alert("✅ Заказ оформлен!", isPresented: $showOrderSuccess) {
+                Button("Ок") {
+                    cartManager.clear()
+                    dismiss()
+                }
+            } message: {
+                Text("Ваш заказ успешно оформлен и отправлен на кухню.")
+            }
         }
         .padding()
         .navigationTitle("Оформление заказа")
@@ -82,8 +98,10 @@ struct OrderConfirmationView: View {
                 try await createOrder(date: selectedDate, time: selectedTime)
                 cartManager.clear()
                 dismiss()
+                showOrderSuccess = true
                 print("✅ Заказ успешно создан!")
             } catch {
+                print("Session userID:", session.userID)
                 print("❌ Ошибка создания заказа:", error.localizedDescription)
             }
         }
@@ -106,9 +124,9 @@ struct OrderConfirmationView: View {
         let insertResponse = try await client
             .from("orders")
             .insert([
-                "userId": session.userID,
-                "mealDate": mealDate,
-                "mealTime": mealTime
+                "user_id": session.userID,
+                "meal_date": mealDate,
+                "meal_time": mealTime
             ], returning: .representation)
             .select("id")
             .single()

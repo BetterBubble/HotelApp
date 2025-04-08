@@ -39,6 +39,7 @@ final class UserSession: ObservableObject {
 
         await MainActor.run {
             self.userEmail = session.user.email
+            self.userID = session.user.id.uuidString
             if case let .string(url) = session.user.userMetadata["avatar_url"] {
                 self.avatarURL = url
             }

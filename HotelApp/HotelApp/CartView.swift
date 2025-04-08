@@ -11,6 +11,7 @@ struct CartView: View {
     @EnvironmentObject var cartManager: CartManager
     @EnvironmentObject var session: UserSession
     @State private var isOrderPlaced = false
+    @State private var isShowingOrderConfirmation = false
 
     var body: some View {
         VStack {
