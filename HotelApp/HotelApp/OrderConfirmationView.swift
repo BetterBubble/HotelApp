@@ -16,6 +16,7 @@ struct OrderConfirmationView: View {
     @State private var selectedDate = Date()
     @State private var selectedTime = Date()
     @State private var showOrderSuccess = false
+    @State private var showPayment = false
 
     var body: some View {
         VStack(spacing: 20) {
@@ -57,6 +58,9 @@ struct OrderConfirmationView: View {
         }
         .padding()
         .navigationTitle("Оформление заказа")
+        .sheet(isPresented: $showPayment) {
+            SafariView(url: URL(string: "https://example.com/payment-link")!)
+        }
     }
 
     // Разрешённые даты: сегодня и завтра
@@ -99,6 +103,7 @@ struct OrderConfirmationView: View {
                 cartManager.clear()
                 dismiss()
                 showOrderSuccess = true
+                self.showPayment = true
                 print("✅ Заказ успешно создан!")
             } catch {
                 print("Session userID:", session.userID)
