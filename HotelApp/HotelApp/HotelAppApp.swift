@@ -14,28 +14,37 @@ struct HotelAppApp: App {
 
     var body: some Scene {
         WindowGroup {
-            if session.isLoggedIn {
-                TabView {
-                    RoomListView()
-                        .tabItem {
-                            Label("Номера", systemImage: "bed.double")
-                        }
-
-                    MenuView()
-                        .tabItem {
-                            Label("Меню", systemImage: "fork.knife")
-                        }
-                        .environmentObject(cartManager)
-
-                    ProfileView()
-                        .tabItem {
-                            Label("Профиль", systemImage: "person.circle")
-                        }
-                }
-                .environmentObject(session)
-            } else {
-                AuthView()
+            Group {
+                if session.isLoggedIn {
+                    TabView {
+                        RoomListView()
+                            .tabItem {
+                                Label("Номера", systemImage: "bed.double")
+                            }
+                        
+                        MenuView()
+                            .tabItem {
+                                Label("Меню", systemImage: "fork.knife")
+                            }
+                            .environmentObject(cartManager)
+                        
+                        ProfileView()
+                            .tabItem {
+                                Label("Профиль", systemImage: "person.circle")
+                            }
+                    }
                     .environmentObject(session)
+                } else {
+                    AuthView()
+                        .environmentObject(session)
+                }
+            }
+            .task {
+                do {
+                    try await session.checkSession()
+                } catch {
+                    print("Ошибка проверки сессии: \(error.localizedDescription)")
+                }
             }
         }
     }
